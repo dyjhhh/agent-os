@@ -41,13 +41,15 @@ synthetic data and SQLite in place of the private Git transaction adapter.
 It is a personal-project example, not an employer system or a claim of
 enterprise deployment.
 
-## Three parts of the portfolio
+## Five parts of the portfolio
 
 | Repository | Focus | Start with |
 |---|---|---|
 | **This repository** | Shared state, task handoffs and recovery | [Continuity demo](examples/continuity/) |
 | [Agent Eval Gates](https://github.com/dyjhhh/agent-eval-gates) | Output checks and evidence-bound review | [Artifact preflight demo](https://github.com/dyjhhh/agent-eval-gates/tree/main/examples/evidence-release) |
 | [Agent Security Hooks](https://github.com/dyjhhh/agent-security-hooks) | Bounded tool guards and input screening | [Coverage and limitations](https://github.com/dyjhhh/agent-security-hooks/blob/main/docs/security.md) |
+| [Agent Reliability](https://github.com/dyjhhh/agent-reliability) | Alert decisions, delivery state and successful-work evidence | [Offline demo](https://github.com/dyjhhh/agent-reliability/blob/main/demo.py) |
+| [Self-Improving Loops](https://github.com/dyjhhh/self-improving-loops) | Feedback, explicit approval and regression checks | [Synthetic demo](https://github.com/dyjhhh/self-improving-loops/blob/main/demo.py) |
 
 The artifact-preflight demo asks a second question: **is this still the exact
 artifact and evidence the reviewer approved?** An edited source, changed artifact
@@ -68,8 +70,9 @@ workers and delivery receipts. These design notes explain the organization:
 
 The `agents/` and `launchd/` directories contain sanitized reference excerpts.
 They assume a private runtime layout and are **not installed by the quickstart**.
-The continuity example is the self-contained entry point. Additional monitoring
-and self-improvement modules remain private.
+The continuity example is the self-contained entry point. The two companion
+repositories above now provide portable reliability and feedback-loop examples.
+The machine-specific monitoring and self-improvement deployment remains private.
 
 ## What the checks do not prove
 
