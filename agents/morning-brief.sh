@@ -21,7 +21,7 @@ _DOW=$(date +%u)   # 1=Mon .. 6=Sat 7=Sun
 if [ "${WEEKEND_BRIEF:-0}" != "1" ] && { [ "$_DOW" = "6" ] || [ "$_DOW" = "7" ]; }; then
   echo "[$(date)] weekend (dow=$_DOW) — morning brief skipped per the operator 2026-08-25" >> "$LOG"
   # 2026-08-29: a sanctioned skip IS this job doing its job — stamp the heartbeat, or
-  # atlas_cron-watchdog counts 30h of "no genuine success" and pages her a stale alert
+  # atlas-cron-watchdog counts 30h of "no genuine success" and pages her a stale alert
   # every weekend (first false 🚨 fired Sat 8/29 13:20).
   mkdir -p /tmp/cron-heartbeats && date +%s > /tmp/cron-heartbeats/com.operator.morning-brief
   exit 0
@@ -62,7 +62,7 @@ EXPIRY_OUT=$(python3 "$HOME/agent-os/scripts/reminders-date-expiry.py" 2>/dev/nu
 $EXPIRY_OUT
 (DATE-EXPIRED — 2026-07-23 the operator: 「日期过了/已完成的,你自己清掉就行,别甩给我」。**你自己动手删 reminders.md 里对应的行**(它们的日期已过 = 无需再提醒),然后在 brief 里用 ONE line 汇报:'🧹 已自动清理 N 条过期提醒(<一句话列出>)'。ONLY 保留不删的例外:该条明确写着 KEEP/持续提醒/recurring,或 owner 文件显示仍未决 → 那种照旧列出来问她。绝不再输出「你清一下 reminders.md 对应行」这种把活推给她的句子。)"
 
-# 2026-07-16 (BUG-atlas_claims-vs-disk): 4th deterministic net — provenance-lint. Catches doctrine
+# 2026-07-16 (BUG-atlas-claims-vs-disk): 4th deterministic net — provenance-lint. Catches doctrine
 # entries citing vault articles that were never written (phantom sources) + daily-log ✅-receipts
 # naming files that exist nowhere (fabricated write-claims). Pairs with hook-receipt-verify.sh
 # (send-time gate); this is the daily backstop for anything that slipped past. Flag-only.

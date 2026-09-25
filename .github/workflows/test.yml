@@ -2,6 +2,8 @@ name: portable-example
 on:
   push:
   pull_request:
+  schedule:
+    - cron: "17 13 * * 1"   # Monday, so an abandoned repo stops looking green
   workflow_dispatch:
 jobs:
   continuity:

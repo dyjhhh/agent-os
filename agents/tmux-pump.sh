@@ -27,7 +27,8 @@ export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
 set -e
 
 PROMPT="$1"
-TMUX_SESSION="${ATLAS_TMUX_SESSION:_atlas}"
+TMUX_SESSION="${ATLAS_TMUX_SESSION:-atlas}"
+[ -n "$TMUX_SESSION" ] || { echo "empty tmux session" >&2; exit 1; }
 LOG="${TMUX_PUMP_LOG:-$HOME/agent-os/scripts/tmux-pump.log}"
 
 if [ -z "$PROMPT" ]; then

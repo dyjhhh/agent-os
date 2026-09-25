@@ -187,12 +187,12 @@ run_skill() {
 # 2026-09-12 (Atlas handoff 9/12): the fixed `sleep 60` between the two pumps was a guess. When
 # competitor-intel keeps Atlas busy past its receipt (it talks after writing it), the deep-dive prompt
 # lands mid-turn and is lost — the 8/29 failure shape again, one minute later. Wait for Atlas's pane to
-# be genuinely idle instead: the same "esc to interrupt" working indicator atlas_stuck-detector trusts,
+# be genuinely idle instead: the same "esc to interrupt" working indicator atlas-stuck-detector trusts,
 # 2 consecutive idle polls (15s apart), capped. ATLAS_PANE_CMD overrides the capture for tests.
 wait_atlas_idle() {
   local max="${1:-1200}" waited=0 idle_streak=0 tail8
-  local cmd="${ATLAS_PANE_CMD:-tmux capture-pane -t ${ATLAS_TMUX_SESSION:_atlas} -p}"
-  if [ -z "$ATLAS_PANE_CMD" ] && ! tmux has-session -t "${ATLAS_TMUX_SESSION:_atlas}" 2>/dev/null; then
+  local cmd="${ATLAS_PANE_CMD:-tmux capture-pane -t ${ATLAS_TMUX_SESSION:-atlas} -p}"
+  if [ -z "$ATLAS_PANE_CMD" ] && ! tmux has-session -t "${ATLAS_TMUX_SESSION:-atlas}" 2>/dev/null; then
     echo "[$(date)] wait_atlas_idle: no Atlas tmux session — nothing to wait for" >> "$LOG"; return 0
   fi
   while [ "$waited" -lt "$max" ]; do

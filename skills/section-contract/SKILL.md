@@ -1,7 +1,7 @@
 ---
 name: section-contract
-trigger: scheduled — the daily brief job, 06:00 local
-gate: advisory (section_caps, stale_leak) — see evals/cases/
+trigger: scheduled, the daily brief job at 06:00 local
+gate: stale_leak blocks; section_caps is advisory (cases in agent-eval-gates/evals/cases/)
 status: synthetic example, written for this repository
 ---
 
@@ -21,13 +21,13 @@ version of it was not finished.
 
 | section | cap (chars) | dropped when |
 | --- | --- | --- |
-| `ACTION NEEDED` | 480 | nothing is due — the header is omitted, not printed empty |
+| `ACTION NEEDED` | 480 | nothing is due; the header is omitted, not printed empty |
 | `WHAT CHANGED` | 700 | no delta since the previous run |
 | `INBOX` | 450 | no unread from a watched sender |
-| `LEDGER` | 200 | never — repetition here is intentional, see rule 4 |
+| `LEDGER` | 200 | never; repetition here is intentional, see rule 4 |
 | `AGENDA` | 300 | the reader has no session planned |
 | `SERENDIPITY` | 420 | nothing surfaced above the relevance floor |
-| **total** | **3000** | — |
+| **total** | **3000** | n/a |
 
 Caps are measured in characters, not tokens or words, because the reader's complaint was about
 screen height on a phone and characters are what predicts it. The total is not the sum of the parts:
@@ -40,7 +40,7 @@ a run may spend its budget unevenly, but never exceed 3000.
    not the generator's exit code. This one rule invalidated an entire class of green-but-silent runs.
 
 2. **(2026-06-13) Reconcile before surfacing.** Before printing any item as pending, open the
-   canonical file it points at and look for a terminal state — done, cancelled, sent, paid, booked.
+   canonical file it points at and look for a terminal state: done, cancelled, sent, paid, booked.
    A reminder file is a copy, and copies go stale. The item is dropped if the canonical file says it
    closed, and no note is printed about the drop.
 
@@ -67,11 +67,15 @@ a run may spend its budget unevenly, but never exceed 3000.
 
 ## How this is checked
 
-`section_caps` is registered in `evals/scorers.py` and runs **advisory**: it reports which sections
-exceeded their budget and by how much, and never blocks a run. It is advisory on purpose — a brief
-that is 40 characters long in one section is worse withheld than delivered. `stale_leak` covers
-rules 2 and 3 and is one of the blocking gate scorers, because a confidently-wrong status is the
-failure mode the reader names as the most expensive.
+`section_caps` is registered in
+[evals/scorers.py](https://github.com/dyjhhh/agent-eval-gates/blob/main/evals/scorers.py)
+in agent-eval-gates and runs **advisory**: it reports which sections exceeded their budget and by
+how much, and never blocks a run. It is advisory on purpose: a brief that is 40 characters long in
+one section is worse withheld than delivered. `stale_leak` covers rules 2 and 3 and is one of the
+blocking gate scorers, because a confidently-wrong status is the failure mode the reader names as
+the most expensive.
 
-Cases live in `evals/cases/`. Each regression case is a real failure, rewritten with synthetic
-subject matter and its structure preserved, paired with the corrected output.
+Cases live in the evals/cases/ directory of
+[agent-eval-gates](https://github.com/dyjhhh/agent-eval-gates/tree/main/evals/cases). Some
+regression cases are real failures rewritten with synthetic subject matter; others are constructed
+guards for the same failure types. Each is paired with a corrected output.

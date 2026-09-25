@@ -10,7 +10,7 @@
 #
 # SAFETY: only injects when Atlas is UP and IDLE (prompt visible, not mid-thought) — otherwise the
 # injection itself would be lost. If Atlas is busy, exits 0 and retries next heartbeat.
-# Called: post-boot by atlas_tmux-start.sh + every heartbeat.
+# Called: post-boot by atlas-tmux-start.sh + every heartbeat.
 export PATH="/opt/homebrew/bin:/usr/bin:/bin"
 DIR="$HOME/.claude/channels/telegram"
 Q="$DIR/inbound-queue.jsonl"

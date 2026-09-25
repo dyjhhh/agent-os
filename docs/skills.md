@@ -4,25 +4,25 @@ A skill is a markdown file that an agent loads when a trigger matches: a slash c
 
 - **Trigger and scope** in the front matter, so the wrong skill does not fire.
 - **Rules with their incident date.** A rule reads like "LAST-BULLET-WINS (2026-09-05 incident): an append-only section is a timeline, not a fact; a grep hit is a pointer". The date is the link to the postmortem and the reason the rule is not up for debate in the moment.
-- **A deterministic gate at the end.** Send-facing skills finish with an explicit call to `evals/skill-eval.py --gate`. The model cannot skip the check because the check is not a suggestion.
+- **A deterministic gate at the end.** The briefs, news cards and email drafts finish with an explicit call to `evals/skill-eval.py --gate` from [agent-eval-gates](https://github.com/dyjhhh/agent-eval-gates). The model cannot skip the check because the check is not a suggestion.
 - **Non-negotiables** listed separately, so a calibration run that edits the skill knows what it may not touch.
 
 ## What is published, and what is not
 
-**No production skill file is published.** The index below names the system-facing ones, out of 97 in total, one line each — and that index is the whole of what leaves the private repository.
+**No production skill file is published.** The index below names the system-facing ones, out of 97 in total, one line each, and that index is the whole of what leaves the private repository.
 
-They were briefly published in full on 2026-09-15 and withdrawn on 2026-09-21. The reason is not that they contain secrets in the credential sense, but that a life-operations contract is *made of* the life it operates: the counterparties by name, the medical and financial state a rule exists to protect, the framing to use with a particular official. A sanitizer that renames people leaves the shape of who they are and what happened to them, and the shape is the part that identifies them. Row 19 of the incident log has the full accounting, including the three independent ways the pipeline failed to notice.
+They were briefly published in full on 2026-09-15 and withdrawn on 2026-09-21. A life-operations contract is made of the life it operates, and a sanitizer that renames people still leaves enough shape to identify them. The failure is row 19 of the [incident log](incidents.md).
 
 What is published instead are two contracts written from scratch for this repository, carrying the real structure with synthetic subject matter:
 
-- [`skills/section-contract`](../skills/section-contract/SKILL.md) — per-section length budgets, a reconcile pass, and an advisory scorer.
-- [`skills/outbound-draft`](../skills/outbound-draft/SKILL.md) — a skill wired to a gate that can refuse its output, with the two calibration changes that made the gate bite.
+- [`skills/section-contract`](../skills/section-contract/SKILL.md): per-section length budgets, a reconcile pass, and an advisory scorer.
+- [`skills/outbound-draft`](../skills/outbound-draft/SKILL.md): a skill wired to a gate that can refuse its output, with the two calibration changes that made the gate bite.
 
 The index below is a list, not a set of links.
 
 | Skill | What it does |
 |---|---|
-| `calibration-loop` | Turns my verdicts into parameter changes, weekly, under the rules in `docs/self-improving-loops.md` |
+| `calibration-loop` | Turns my verdicts into parameter changes, weekly; a portable example of its approval boundary is [self-improving-loops](https://github.com/dyjhhh/self-improving-loops) |
 | `work-trace` | Appends a structured trace of a session's decisions to the trace log; feeds calibration and the playbooks |
 | `dream` | Saturday memory hygiene: stale, duplicate and orphan proposals, at most twenty, dated |
 | `handoff` | Writes a cross-agent handoff row: status, artifact, next owner, tripwire |
@@ -46,4 +46,4 @@ The index below is a list, not a set of links.
 | `rambo` | Mirrors a stream-of-consciousness dump back as a structured plan, and takes no action on it |
 | `remind` | The reminder format and its stale-sweeping rules |
 | `heartbeat` | The always-on agent's periodic check: what to look at, what counts as signal, when to stay silent |
-| `atlas_doctor` | Self-diagnosis for the always-on agent: session, auth, listener, plists, model and effort settings |
+| `atlas-doctor` | Self-diagnosis for the always-on agent: session, auth, listener, plists, model and effort settings |

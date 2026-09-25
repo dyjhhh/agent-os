@@ -9,15 +9,14 @@ rather than taken on faith.
 ## What is and is not in this directory
 
 The operator's own system runs 97 of these, and they are **not published here**. They are
-life-operations contracts: they name real people, real counterparties, real medical and financial
-state. No amount of regular-expression redaction makes a document safe when its subject matter is
-the private life it was written to run — a sanitizer that renames people still leaks the shape of
-who they are and what happened to them. Publishing them was tried on 2026-09-15 and reversed six
-days later; the incident is row 19 of docs/incidents.md (private reference, not included in this snapshot).
+life-operations contracts, made of the life they operate. No amount of regular-expression
+redaction makes such a document safe: a sanitizer that renames people still leaves enough shape
+to identify them. Publishing them was tried on 2026-09-15 and reversed six days later; the
+incident is row 19 of the [incident log](../docs/incidents.md).
 
 What is published instead are the two contracts below, written from scratch for this repository.
-They carry the real structure — the trigger block, the dated rules, the per-section caps, the gate
-wiring — with synthetic subject matter. Treat them as the shape of the thing, not as a redaction
+They carry the real structure (the trigger block, the dated rules, the per-section caps, the gate
+wiring) with synthetic subject matter. Treat them as the shape of the thing, not as a redaction
 of it.
 
 | file | what it demonstrates |
@@ -25,5 +24,5 @@ of it.
 | [section-contract/SKILL.md](section-contract/SKILL.md) | a length-and-content contract with per-section caps, a reconcile pass, and an advisory scorer |
 | [outbound-draft/SKILL.md](outbound-draft/SKILL.md) | a skill wired to a **blocking** gate, including the two calibration changes that made the gate actually bite |
 
-The architecture of the real set — how skills are registered, how they are evaluated, how a rule
-gets added — is in [docs/skills.md](../docs/skills.md).
+The architecture of the real set (how skills are registered, how they are evaluated, how a rule
+gets added) is in [docs/skills.md](../docs/skills.md).

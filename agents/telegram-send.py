@@ -32,8 +32,8 @@ def md_to_html(text):
 
     Why this lives HERE (not per-script): every cron/digest sender pipes through
     telegram-send.py, but only some had their own fragile inline `sed` converter
-    (morning-brief, heartbeat) — others (hourly-email-check, store2-reeval,
-    review-proposals, personal finances) sent RAW markdown with parse_mode=HTML, so
+    (morning-brief, heartbeat) — others (hourly-email-check, site-reeval,
+    review-proposals, a weekly digest) sent RAW markdown with parse_mode=HTML, so
     Telegram showed literal `**`. Centralizing the converter fixes all of them at
     once and makes the inline seds redundant (idempotent: already-HTML → passthrough).
     """

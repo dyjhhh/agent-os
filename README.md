@@ -4,8 +4,8 @@
 
 I build and operate a personal agent system with shared state, evaluation checks,
 human review and recovery workflows. Three agents use it across two Macs for
-research, documents and daily operations. I use Claude Code and Codex as coding
-tools and review the changes myself.
+research, documents and daily operations. The agents run on Claude Code and
+Codex, which I also use to write this code; I review the changes myself.
 
 This repository makes part of that work runnable without access to my accounts
 or private data. The question behind the first example is simple:
@@ -48,7 +48,7 @@ enterprise deployment.
 | **This repository** | Shared state, task handoffs and recovery | [Continuity demo](examples/continuity/) |
 | [Agent Eval Gates](https://github.com/dyjhhh/agent-eval-gates) | Output checks and evidence-bound review | [Artifact preflight demo](https://github.com/dyjhhh/agent-eval-gates/tree/main/examples/evidence-release) |
 | [Agent Security Hooks](https://github.com/dyjhhh/agent-security-hooks) | Bounded tool guards and input screening | [Coverage and limitations](https://github.com/dyjhhh/agent-security-hooks/blob/main/docs/security.md) |
-| [Agent Reliability](https://github.com/dyjhhh/agent-reliability) | Alert decisions, delivery state and successful-work evidence | [Offline demo](https://github.com/dyjhhh/agent-reliability/blob/main/demo.py) |
+| [Agent Reliability](https://github.com/dyjhhh/agent-reliability) | Alert decisions, delivery state, successful-work evidence and calendar replay | [Offline demo](https://github.com/dyjhhh/agent-reliability/blob/main/demo.py) |
 | [Self-Improving Loops](https://github.com/dyjhhh/self-improving-loops) | Feedback, explicit approval and regression checks | [Synthetic demo](https://github.com/dyjhhh/self-improving-loops/blob/main/demo.py) |
 
 The artifact-preflight demo asks a second question: **is this still the exact
@@ -65,13 +65,16 @@ workers and delivery receipts. These design notes explain the organization:
 - [Architecture](docs/architecture.md): task ownership, shared state and delivery.
 - [Principles](docs/principles.md): explicit action gates and observable outcomes.
 - [Skills](docs/skills.md): reusable procedures and how corrections become checks.
+- [Incidents](docs/incidents.md): failures that changed how the system is built,
+  one row each.
 - [Synthetic skill examples](skills/README.md): two contracts written for this
   repository, rather than copies of personal operating instructions.
 
 The `agents/` and `launchd/` directories contain sanitized reference excerpts.
 They assume a private runtime layout and are **not installed by the quickstart**.
-The continuity example is the self-contained entry point. The two companion
-repositories above now provide portable reliability and feedback-loop examples.
+The continuity example is the self-contained entry point. Agent Reliability and
+Self-Improving Loops, listed above, now provide portable reliability and
+feedback-loop examples.
 The machine-specific monitoring and self-improvement deployment remains private.
 
 ## What the checks do not prove
