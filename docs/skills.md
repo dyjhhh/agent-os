@@ -4,7 +4,7 @@ A skill is a markdown file that an agent loads when a trigger matches: a slash c
 
 - **Trigger and scope** in the front matter, so the wrong skill does not fire.
 - **Rules with their incident date.** A rule reads like "LAST-BULLET-WINS (2026-09-05 incident): an append-only section is a timeline, not a fact; a grep hit is a pointer". The date is the link to the postmortem and the reason the rule is not up for debate in the moment.
-- **A deterministic gate at the end.** The briefs, news cards and email drafts finish with an explicit call to `evals/skill-eval.py --gate` from [agent-eval-gates](https://github.com/dyjhhh/agent-eval-gates). The model cannot skip the check because the check is not a suggestion.
+- **A deterministic gate at the end.** The briefs, news cards and email drafts finish with an explicit call to `evals/skill-eval.py --gate` from [agent-eval-gates](https://github.com/dyjhhh/agent-eval-gates). When a wrapper script runs it, as on the headless path in [agents/morning-brief.sh](../agents/morning-brief.sh), the model cannot skip it, and a failed gate there prepends a visible warning rather than withholding the brief. Inside an interactive session the call is an instruction in the skill.
 - **Non-negotiables** listed separately, so a calibration run that edits the skill knows what it may not touch.
 
 ## What is published, and what is not

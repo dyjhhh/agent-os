@@ -34,6 +34,7 @@ An exact retry returns its original receipt without another write.
 | Separate tasks | A turn cannot be reused for another task |
 
 [Read the design and limitations](examples/continuity/README.md) ·
+[Read the implementation](examples/continuity/continuity.py) ·
 [Read the tests](examples/continuity/test_continuity.py)
 
 This is a new, simplified extraction of the private system's design. It uses

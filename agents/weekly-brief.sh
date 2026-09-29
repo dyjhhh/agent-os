@@ -1,6 +1,6 @@
 #!/bin/bash
-# Weekly brief pipeline — runs Monday 6 PM CT via launchd
-# Runs 4 skills sequentially, captures output, sends each via Telegram (guaranteed delivery)
+# Weekly brief pipeline — scheduled weekly via launchd, with the RunAtLoad catch-up guard below
+# Runs 2 skills sequentially; the deep dive is sent via Telegram and counts as delivered only when a receipt file exists
 export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
 cd $HOME/agent-os
 
@@ -242,9 +242,9 @@ fi
 # reachable" semantics for the liveness heartbeat below. Failures still surface via claude-guard/log.
 curl -s "https://api.telegram.org/bot${BOT_TOKEN}/getMe" > /dev/null 2>&1
 NOTICE_EXIT=$?
-# Liveness heartbeat (2026-06-20) — emit ok ONLY after the completion notice is
-# confirmed delivered (reached end of pipeline = it genuinely ran), mirroring
-# morning-brief's confirmed-delivery gate. curl exit 0 = Telegram accepted POST.
+# Liveness heartbeat (2026-06-20): ok means the pipeline reached this line and api.telegram.org
+# answered (curl without -f exits 0 on any HTTP status). It does not confirm delivery; the receipt
+# check above is what gates the sentinel.
 _HB="$HOME/agent-os/reliability/cron-heartbeat.sh"
 if [ "$NOTICE_EXIT" -eq 0 ]; then
   bash "$_HB" ok com.operator.weekly-brief 2>/dev/null

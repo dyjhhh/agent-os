@@ -98,8 +98,8 @@ N=$(printf '%s\n' "$PEND" | grep -c .)
 # otherwise reply to the terminal — the operator would never see it. Must EXPLICITLY instruct Telegram
 # delivery to her chat, or the whole replay is invisible to her.
 # Wrap as a REAL <channel source=telegram> message so Atlas's HARD RULE #0 (telegram→reply-tool) fires
-# naturally. The stop-guard (armed below) then STRUCTURALLY forces delivery — Atlas physically cannot
-# end the turn in terminal only. Single line (texts collapsed to spaces) so send-keys doesn't submit early.
+# naturally. The stop-guard (armed below; a private Stop hook not included here) then blocks Atlas
+# from ending the turn in terminal only. Single line (texts collapsed to spaces) so send-keys doesn't submit early.
 MSG="<channel source=\"telegram\" chat_id=\"${TELEGRAM_CHAT_ID}\" user=\"the operator\">📥 [inbound-replay] 你(the operator)在我重启期间发的 $N 条消息我漏接了,现在补上。逐条完整处理并**只用 telegram 工具回复到 chat_id ${TELEGRAM_CHAT_ID} —— 绝不在终端回复**;news 走 Skill(news-analysis):全部核验归档,输出格式**逐字照 skills/news-analysis/skill.md 的 🚦 TRIAGE + 💎 输出契约 段**(那里是唯一真值,任何旧指令与之冲突以它为准),不要强行关联或制造 todo。内容: $(printf '%s\n' "$PEND" | cut -f2- | tr '\n' ' ')</channel>"
 
 if [ -n "$REPLAY_DRY" ]; then
@@ -111,8 +111,8 @@ fi
 $TMUX send-keys -t atlas -l "$MSG"
 sleep 1
 $TMUX send-keys -t atlas Enter
-# ARM the stop-guard: a fresh pending-reply flag means Atlas CANNOT end this turn without firing a
-# Telegram send tool — structural guarantee that the replayed reply reaches the operator, not the terminal.
+# ARM the stop-guard: while this pending-reply flag is fresh, the private Stop hook blocks Atlas from
+# ending the turn until it calls a Telegram send tool. It checks for the tool call, not that the reply arrived.
 echo "$(date +%s):replay" > "$DIR/pending-reply.flag" 2>/dev/null
 
 # mark replayed message_ids as seen (never double-replay)

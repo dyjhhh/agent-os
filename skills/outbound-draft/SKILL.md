@@ -1,7 +1,7 @@
 ---
 name: outbound-draft
 trigger: on request ("draft a reply to X")
-gate: BLOCKING on ai_fingerprint (>= 0.65) and forbidden_terms; markdown_leak is reported but advisory
+gate: BLOCKING when ai_fingerprint is below 0.65 or forbidden_terms has a hit; markdown_leak is reported but advisory
 status: synthetic example, written for this repository
 ---
 

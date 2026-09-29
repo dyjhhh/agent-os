@@ -35,7 +35,7 @@ TOOLS="Bash,Read,Write,Edit,Glob,Grep,WebFetch,WebSearch"
 # owner file + overdue unchecked boxes. The ENFORCEMENT layer that does NOT rely on the LLM
 # brief remembering to reconcile (prose HARD RULE #5 = weakest, gets skipped). Writes a report
 # (read by Forge session-start + /reconcile too) and feeds findings into the brief prompt so
-# they're GUARANTEED surfaced. Flag-only — never edits (the operator 2026-06-15: "只报给我,我拍板").
+# they are always in the prompt (the model still has to surface them). Flag-only — never edits (the operator 2026-06-15: "只报给我,我拍板").
 STALE_REPORT="$HOME/agent-os/memory/stale-audit-report.md"
 STALE_OUT=$(python3 "$HOME/agent-os/reliability/stale-audit.py" --report "$STALE_REPORT" 2>/dev/null)
 STALE_HINT=""
