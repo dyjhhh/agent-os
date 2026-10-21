@@ -122,8 +122,9 @@ run_skill() {
   echo "[$(date)] tmux-pump exit=$pump_exit (or no delivery) for ${skill} — falling back to programmatic claude -p." >> "$LOG"
 
   echo "[$(date)] Running ${skill}..." >> "$LOG"
-  local output=$(safe_claude -p "${skill}" --allowedTools "$TOOLS" --max-turns "$turns" 2>&1)
-  local exit_code=$?
+  local output exit_code
+  output=$(safe_claude -p "${skill}" --allowedTools "$TOOLS" --max-turns "$turns" 2>&1)
+  exit_code=$?
 
   echo "=== ${label} ===" >> "$LOG"
   echo "$output" >> "$LOG"
