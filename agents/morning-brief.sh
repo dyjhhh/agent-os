@@ -21,7 +21,7 @@ _DOW=$(date +%u)   # 1=Mon .. 6=Sat 7=Sun
 if [ "${WEEKEND_BRIEF:-0}" != "1" ] && { [ "$_DOW" = "6" ] || [ "$_DOW" = "7" ]; }; then
   echo "[$(date)] weekend (dow=$_DOW) — morning brief skipped per the operator 2026-08-25" >> "$LOG"
   # 2026-08-29: a sanctioned skip IS this job doing its job — stamp the heartbeat, or
-  # atlas-cron-watchdog counts 30h of "no genuine success" and pages her a stale alert
+  # atlas-cron-watchdog counts 30h of "no genuine success" and pages the operator a stale alert
   # every weekend (first false 🚨 fired Sat 8/29 13:20).
   mkdir -p /tmp/cron-heartbeats && date +%s > /tmp/cron-heartbeats/com.operator.morning-brief
   exit 0
@@ -54,13 +54,13 @@ fi
 SWEEP_OUT=$(python3 "$HOME/agent-os/scripts/reminders-stale-sweeper.py" 2>/dev/null)
 [ -n "$SWEEP_OUT" ] && ! printf '%s' "$SWEEP_OUT" | grep -q "^✅" && STALE_HINT="$STALE_HINT
 
-REMINDER-vs-OWNER-FILE mismatches (owner file already resolved — DROP these + 自己清掉 reminders.md 对应行(2026-07-23 standing approval),一行汇报;绝不叫她清):
+REMINDER-vs-OWNER-FILE mismatches (owner file already resolved — DROP these + 自己清掉 reminders.md 对应行(2026-07-23 standing approval),一行汇报;绝不叫 the operator 清):
 $SWEEP_OUT"
 EXPIRY_OUT=$(python3 "$HOME/agent-os/scripts/reminders-date-expiry.py" 2>/dev/null)
 [ -n "$EXPIRY_OUT" ] && ! printf '%s' "$EXPIRY_OUT" | grep -q "^✅" && STALE_HINT="$STALE_HINT
 
 $EXPIRY_OUT
-(DATE-EXPIRED — 2026-07-23 the operator: 「日期过了/已完成的,你自己清掉就行,别甩给我」。**你自己动手删 reminders.md 里对应的行**(它们的日期已过 = 无需再提醒),然后在 brief 里用 ONE line 汇报:'🧹 已自动清理 N 条过期提醒(<一句话列出>)'。ONLY 保留不删的例外:该条明确写着 KEEP/持续提醒/recurring,或 owner 文件显示仍未决 → 那种照旧列出来问她。绝不再输出「你清一下 reminders.md 对应行」这种把活推给她的句子。)"
+(DATE-EXPIRED — 2026-07-23 the operator: 「日期过了/已完成的,你自己清掉就行,别甩给我」。**你自己动手删 reminders.md 里对应的行**(它们的日期已过 = 无需再提醒),然后在 brief 里用 ONE line 汇报:'🧹 已自动清理 N 条过期提醒(<一句话列出>)'。ONLY 保留不删的例外:该条明确写着 KEEP/持续提醒/recurring,或 owner 文件显示仍未决 → 那种照旧列出来问 the operator。绝不再输出「你清一下 reminders.md 对应行」这种把活推给 the operator 的句子。)"
 
 # 2026-07-16 (BUG-atlas-claims-vs-disk): 4th deterministic net — provenance-lint. Catches doctrine
 # entries citing vault articles that were never written (phantom sources) + daily-log ✅-receipts
@@ -74,7 +74,7 @@ $PROV_OUT"
 
 # 2026-07-16 (news self-heal): auto-run the news burst acceptance check on YESTERDAY so a drop / bloat
 # regression is caught BY THE SYSTEM, never by the operator. Surfaces the 🔴/🟡 verdict into the brief. This is
-# the guard rail that ends the "she describes the bug → we fix → it recurs" loop for news-analysis.
+# the guard rail that ends the "operator describes the bug → we fix → it recurs" loop for news-analysis.
 NEWS_YDAY=$(date -v-1d +%Y-%m-%d 2>/dev/null || date -d yesterday +%Y-%m-%d 2>/dev/null)
 NEWSV_OUT=$(bash "$HOME/agent-os/agents/news-verify.sh" "$NEWS_YDAY" 2>/dev/null | grep -E "🔴|🟡|缺口" | head -8)
 [ -n "$NEWSV_OUT" ] && STALE_HINT="$STALE_HINT
@@ -119,11 +119,11 @@ PRE_PUMP=$(stat -f %m "$LAST_REPLY" 2>/dev/null || echo 0)
 echo "[$(date)] Attempting tmux-pump → Atlas tmux session 'atlas'..." >> "$LOG"
 # 2026-08-26: Atlas must drop a RECEIPT FILE after the send. last-reply mtime alone is a proxy —
 # it advances on ANY Telegram message Atlas sends, including a conversational reply to a mangled
-# prompt (that false-positive ate the 8/26 brief: script logged "VERIFIED delivered", she got nothing).
+# prompt (that false-positive ate the 8/26 brief: script logged "VERIFIED delivered", the operator got nothing).
 BRIEF_RECEIPT="$HOME/.brief-delivered-$(date +%F)"
 rm -f "$BRIEF_RECEIPT"
 # 2026-08-26 SELF-IMPROVING PATH CHOICE: the tmux-pump path is cheaper (subscription) but fragile
-# — it collides with her live Atlas chat and with composer leftovers. Track consecutive pump failures;
+# — it collides with the operator's live Atlas chat and with composer leftovers. Track consecutive pump failures;
 # after 2 in a row, skip the pump entirely for a week and go straight to the deterministic claude -p
 # path. The system stops re-learning the same lesson every morning.
 PUMP_FAIL_STATE="$HOME/.brief-pump-failstreak"
@@ -146,7 +146,7 @@ if [ $PUMP_EXIT -eq 0 ]; then
   for _w in $(seq 1 30); do   # 5 min — brief generation legitimately takes minutes
     sleep 10
     # BOTH must hold: Atlas wrote the receipt file (it ran the skill AND the send succeeded)
-    # AND last-reply advanced (something actually went out to her Telegram).
+    # AND last-reply advanced (something actually went out to the operator's Telegram).
     if [ -f "$BRIEF_RECEIPT" ] && [ "$(stat -f %m "$LAST_REPLY" 2>/dev/null || echo 0)" -gt "$PRE_PUMP" ]; then
       DELIVERED=1; break
     fi
@@ -198,7 +198,7 @@ if $SUCCESS; then
   # Runs the deterministic eval (evals/skill-eval.py) on the produced brief BEFORE send.
   # references_current_date enforces the operator's ULTIMATE TEST: a brief with no today/yesterday date =
   # stale/cached = the "stale-memory" bug. SHADOW = log PASS/BLOCK only, NEVER alter the send (a false
-  # block must never cost her the brief). Flip to enforcing (--scrub / regenerate) after a soak
+  # block must never cost the operator the brief). Flip to enforcing (--scrub / regenerate) after a soak
   # proves no false-positives. Pairs the existing stale-audit PRE-step (which hints the model).
   GATE_ART=$(mktemp /tmp/mb-gate.XXXXXX)
   printf '%s\n' "$OUTPUT" > "$GATE_ART"
@@ -239,7 +239,7 @@ $OUTPUT"
     echo "[$(date)] Sent successfully." >> "$LOG"
     # 2026-08-26: the DIRECT path must write the same receipt the tmux path writes —
     # otherwise brief-delivery-watchdog sees no receipt and re-fires forever on a day
-    # the brief actually went out. Receipt = "she has it", regardless of which path won.
+    # the brief actually went out. Receipt = "the operator has it", regardless of which path won.
     date +%s > "$BRIEF_RECEIPT" 2>/dev/null || true
     date +%s > /tmp/cron-heartbeats/com.operator.morning-brief 2>/dev/null || true
     bash "$_HB" ok com.operator.morning-brief 2>/dev/null   # ✅ heartbeat ONLY on CONFIRMED delivery (not just cron-ran)
@@ -251,7 +251,7 @@ else
   # All retries failed — alert the operator
   curl -s -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
     -d "chat_id=${CHAT_ID}" \
-    --data-urlencode "text=☀️ ❌ Morning Brief 生成失败 (${MAX_RETRY} 次尝试全部失败, last exit=$EXIT_CODE). 检查 Mac Mini logs。" > /dev/null 2>&1
+    --data-urlencode "text=☀️ ❌ Morning Brief 生成失败 (${MAX_RETRY} 次尝试全部失败, last exit=$EXIT_CODE). check the always-on host logs." > /dev/null 2>&1
   echo "[$(date)] All ${MAX_RETRY} attempts failed." >> "$LOG"
   bash "$HOME/agent-os/reliability/cron-heartbeat.sh" fail com.operator.morning-brief "gen failed exit=$EXIT_CODE" 2>/dev/null
 fi

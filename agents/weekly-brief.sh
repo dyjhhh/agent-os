@@ -37,11 +37,11 @@ TOOLS="Bash,Read,Write,Edit,Glob,Grep,WebFetch,WebSearch"
 send_to_telegram() {
   # 2026-08-29 HARD RULE #9 guard: a system-level error string is NOT a report. On 8/29 the
   # claude -p fallback died at max-turns and the raw "Error: Reached max turns (40)" was sent
-  # to her Telegram as if it were the Weekly Deep Dive. Errors go to the log + handoff, never her.
+  # to the operator's Telegram as if it were the Weekly Deep Dive. Errors go to the log + handoff, never to the operator.
   # (caller signature: send_to_telegram "$content" "$label" — content is $1, label is $2)
   if echo "$1" | head -3 | grep -qiE "^Error:|Reached max turns|rate.?limit|invalid_grant|command not found"; then
     echo "[$(date)] SUPPRESSED error-as-content send for ${2:-?}: $(echo "$1" | head -1)" >> "$LOG"
-    echo "| $(date +%F) | weekly-brief→Forge | 🔴 fallback 产物是错误文本(已拦截未发她): ${2:-?} → $(echo "$1" | head -1 | cut -c1-80) | OPEN |" >> "$HOME/.claude/projects/-project/memory/agent-handoffs.md" 2>/dev/null
+    echo "| $(date +%F) | weekly-brief→Forge | 🔴 fallback 产物是错误文本(已拦截, 未发送): ${2:-?} → $(echo "$1" | head -1 | cut -c1-80) | OPEN |" >> "$HOME/.claude/projects/-project/memory/agent-handoffs.md" 2>/dev/null
     return 1
   fi
   local raw="$1"
@@ -101,7 +101,7 @@ run_skill() {
     for _w in $(seq 1 36); do
       sleep 10
       # BOTH must hold: Atlas wrote the receipt (skill ran AND send succeeded) AND last-reply
-      # advanced (something actually reached her Telegram). Either alone is a proxy.
+      # advanced (something actually reached the operator's Telegram). Either alone is a proxy.
       if [ "$silent" = 1 ]; then
         # Silent sub-task: nothing reaches Telegram by design, so last-reply can never advance.
         # Real completion = Atlas wrote the receipt AND a fresh cron-results report exists.
@@ -136,9 +136,9 @@ run_skill() {
   fi
 
   if [ $exit_code -ne 0 ]; then
-    # HARD RULE #9 (2026-08-29): a system-level failure is not hers to fix — log + handoff,
-    # let brief-delivery-watchdog / the next catch-up retry. No ❌ ping to her phone.
-    echo "| $(date +%F) | weekly-brief→Forge | 🔴 ${label} fallback exit=$exit_code(未发她,待重试/人修) | OPEN |" >> "$HOME/.claude/projects/-project/memory/agent-handoffs.md" 2>/dev/null
+    # HARD RULE #9 (2026-08-29): a system-level failure is not the operator's to fix — log + handoff,
+    # let brief-delivery-watchdog / the next catch-up retry. No ❌ ping to the operator's phone.
+    echo "| $(date +%F) | weekly-brief→Forge | 🔴 ${label} fallback exit=$exit_code(not sent; retry or manual fix) | OPEN |" >> "$HOME/.claude/projects/-project/memory/agent-handoffs.md" 2>/dev/null
     return
   fi
 
@@ -158,7 +158,7 @@ run_skill() {
 
   # ── EVAL FRESHNESS GATE (2026-06-21, SHADOW) — only the dated Weekly Deep Dive ──
   # Same as morning-brief: run the deterministic eval on the produced brief; log PASS/BLOCK +
-  # flag stale to live-pulse, but NEVER alter the send (false-block must not cost her the brief).
+  # flag stale to live-pulse, but NEVER alter the send (false-block must not cost the operator the brief).
   # Scoped to weekly-deep-dive (the dated deliverable); competitor-intel is not freshness-gated.
   if [ -n "$content" ] && echo "$skill" | grep -q "weekly-deep-dive"; then
     local _ga; _ga=$(mktemp /tmp/wb-gate.XXXXXX)
@@ -212,10 +212,10 @@ wait_atlas_idle() {
 
 # Run pipeline sequentially
 # 4th arg = file pattern in ~/agent-os/memory/cron-results/ for content fallback when stdout is short
-# 2026-08-29 FIX: pattern was "venue-competitor-intel-*", but the skill writes
+# 2026-08-29 FIX: pattern was "weekly-competitor-intel-*", but the skill writes
 # competitor-intel-YYYY-MM-DD.md (21 files on disk, 0 matching the old glob), so the
 # short-output file fallback silently never fired for this skill. Match reality.
-run_skill "/venue-competitor-intel" "VENUE Competitor Intel" 20 "competitor-intel-*"
+run_skill "/competitor-intel" "Competitor Intel" 20 "competitor-intel-*"
 # 2026-08-29: never inject the second skill on top of a session still working the first.
 # On 8/29 both were pumped 12s apart; the deep-dive prompt landed mid-turn and was lost.
 # 2026-09-12: fixed 60s → poll for a genuinely idle pane (see wait_atlas_idle above).
@@ -238,7 +238,7 @@ else
   echo "[$(date)] sentinel NOT stamped — no delivery receipt this run; catch-up stays armed" >> "$LOG"
 fi
 
-# Completion notice RETIRED 2026-08-22 (the operator: pure system-level success messages don't reach her).
+# Completion notice RETIRED 2026-08-22 (the operator: pure system-level success messages don't reach the operator).
 # Replaced by a silent connectivity probe so NOTICE_EXIT keeps its "pipeline finished + Telegram
 # reachable" semantics for the liveness heartbeat below. Failures still surface via claude-guard/log.
 curl -s "https://api.telegram.org/bot${BOT_TOKEN}/getMe" > /dev/null 2>&1

@@ -43,7 +43,7 @@ echo "$PANE" | grep -q "esc to interrupt" && exit 0   # busy → retry next tick
 # Two seen-sources (2026-08-30 fix): (1) .inbound-seen, (2) recent Claude Code transcripts — the
 # UserPromptSubmit seen-hook proved unreliable (435/436 ids in .inbound-seen had been written by
 # THIS script, not the hook), so every message the operator sent was getting one spurious replay → Atlas
-# double-replied to her. The transcript is ground truth for "a live session received message N".
+# double-replied to the operator. The transcript is ground truth for "a live session received message N".
 PEND=$(python3 - "$Q" "$SEEN" <<'PY'
 import json,sys,os,re,time,glob
 q,seen_f=sys.argv[1],sys.argv[2]
@@ -96,7 +96,7 @@ N=$(printf '%s\n' "$PEND" | grep -c .)
 
 # build ONE consolidated replay message. CRITICAL: this is injected as TERMINAL input, so Atlas would
 # otherwise reply to the terminal — the operator would never see it. Must EXPLICITLY instruct Telegram
-# delivery to her chat, or the whole replay is invisible to her.
+# delivery to the operator's chat, or the whole replay is invisible to the operator.
 # Wrap as a REAL <channel source=telegram> message so Atlas's HARD RULE #0 (telegram→reply-tool) fires
 # naturally. The stop-guard (armed below; a private Stop hook not included here) then blocks Atlas
 # from ending the turn in terminal only. Single line (texts collapsed to spaces) so send-keys doesn't submit early.
