@@ -1,14 +1,21 @@
 # Personal Agent OS
 
 **Problem:** a new agent session cannot tell from chat history alone what earlier sessions actually finished.\
-**What it shows:** durable task state for always-on agents: state and handoff receipt in one transaction, stale writes rejected, safe retries.\
+**What it shows:** the state layer of the agent harness I run daily: state and its handoff receipt commit together, and a stale revision cannot overwrite a newer one. The [incident log](docs/incidents.md) records 25 failures with their root causes.\
 **Run it in about 60 seconds:** clone, then `make test` (Python 3.10+ and Make; no model, account or network).
 
 [![tests](https://github.com/dyjhhh/agent-os/actions/workflows/test.yml/badge.svg)](https://github.com/dyjhhh/agent-os/actions/workflows/test.yml)
 
-I build and operate a personal agent system with shared state, evaluation checks,
-human review and recovery workflows. Three agents use it across two Macs for
-research, documents and daily operations. The agents run on Claude Code and
+## Applying this on an engineering team
+
+- **Several agents on one task.** Each task has one owner and a versioned state row; an agent that started from an old revision must reload instead of overwriting newer work.
+- **Handoffs between agents or sessions.** The state change and its handoff receipt commit in one SQLite transaction, so the next session resumes from what was committed, not from a chat summary.
+- **Retries from schedulers or people.** Each turn is keyed, so an exact retry returns the original receipt and writes nothing.
+- **Incident review.** One row per failure with its root cause and the guard it left behind, as in [docs/incidents.md](docs/incidents.md).
+
+I build and operate a three-agent harness for my own work, with shared state,
+evaluation checks, human review and recovery workflows. It runs across two Macs
+for research, documents and daily operations. The agents run on Claude Code and
 Codex, which I also use to write this code; I review the changes myself.
 
 This repository makes part of that work runnable without access to my accounts
@@ -95,9 +102,8 @@ history are not included.
 
 ## About me
 
-I am an engineering manager interested in AI products, developer tools and
-reliable platforms. These projects are a way to stay hands-on and make the
-engineering choices behind my own AI workflows visible.
+I am an engineering manager who still builds. I design and run this harness
+myself, and these repositories show the engineering choices behind it.
 
 ## License
 
