@@ -33,9 +33,9 @@ TOOLS="Bash,Read,Write,Edit,Glob,Grep,WebFetch,WebSearch"
 # ── DETERMINISTIC STALE-AUDIT (pre-step, runs on BOTH pump + claude -p paths) ──
 # Cross-file stale detector (stale-audit.py): finds open items pointing to a banner-CLOSED
 # owner file + overdue unchecked boxes. The ENFORCEMENT layer that does NOT rely on the LLM
-# brief remembering to reconcile (prose HARD RULE #5 = weakest, gets skipped). Writes a report
+# brief remembering to reconcile (prose rule #5 = weakest, gets skipped). Writes a report
 # (read by Forge session-start + /reconcile too) and feeds findings into the brief prompt so
-# they are always in the prompt (the model still has to surface them). Flag-only — never edits (the operator 2026-06-15: "只报给我,我拍板").
+# they are always in the prompt (the model still has to surface them). Flag-only: it never edits; the operator decides (2026-06-15).
 STALE_REPORT="$HOME/agent-os/memory/stale-audit-report.md"
 STALE_OUT=$(python3 "$HOME/agent-os/reliability/stale-audit.py" --report "$STALE_REPORT" 2>/dev/null)
 STALE_HINT=""
@@ -54,13 +54,13 @@ fi
 SWEEP_OUT=$(python3 "$HOME/agent-os/scripts/reminders-stale-sweeper.py" 2>/dev/null)
 [ -n "$SWEEP_OUT" ] && ! printf '%s' "$SWEEP_OUT" | grep -q "^✅" && STALE_HINT="$STALE_HINT
 
-REMINDER-vs-OWNER-FILE mismatches (owner file already resolved — DROP these + 自己清掉 reminders.md 对应行(2026-07-23 standing approval),一行汇报;绝不叫 the operator 清):
+REMINDER-vs-OWNER-FILE mismatches (owner file already resolved — DROP these + 自己清掉 reminders.md 对应行(2026-07-23 standing approval),一行汇报;绝不叫用户清):
 $SWEEP_OUT"
 EXPIRY_OUT=$(python3 "$HOME/agent-os/scripts/reminders-date-expiry.py" 2>/dev/null)
 [ -n "$EXPIRY_OUT" ] && ! printf '%s' "$EXPIRY_OUT" | grep -q "^✅" && STALE_HINT="$STALE_HINT
 
 $EXPIRY_OUT
-(DATE-EXPIRED — 2026-07-23 the operator: 「日期过了/已完成的,你自己清掉就行,别甩给我」。**你自己动手删 reminders.md 里对应的行**(它们的日期已过 = 无需再提醒),然后在 brief 里用 ONE line 汇报:'🧹 已自动清理 N 条过期提醒(<一句话列出>)'。ONLY 保留不删的例外:该条明确写着 KEEP/持续提醒/recurring,或 owner 文件显示仍未决 → 那种照旧列出来问 the operator。绝不再输出「你清一下 reminders.md 对应行」这种把活推给 the operator 的句子。)"
+(DATE-EXPIRED — 2026-07-23 用户批准:日期已过或已完成的提醒由你清掉,不要转给用户。**你自己动手删 reminders.md 里对应的行**(它们的日期已过 = 无需再提醒),然后在 brief 里用 ONE line 汇报:'🧹 已自动清理 N 条过期提醒(<一句话列出>)'。ONLY 保留不删的例外:该条明确写着 KEEP/持续提醒/recurring,或 owner 文件显示仍未决 → 那种照旧列出来问用户。绝不再输出「你清一下 reminders.md 对应行」这种把活推给用户的句子。)"
 
 # 2026-07-16 (BUG-atlas-claims-vs-disk): 4th deterministic net — provenance-lint. Catches doctrine
 # entries citing vault articles that were never written (phantom sources) + daily-log ✅-receipts
@@ -79,12 +79,12 @@ NEWS_YDAY=$(date -v-1d +%Y-%m-%d 2>/dev/null || date -d yesterday +%Y-%m-%d 2>/d
 NEWSV_OUT=$(bash "$HOME/agent-os/agents/news-verify.sh" "$NEWS_YDAY" 2>/dev/null | grep -E "🔴|🟡|缺口" | head -8)
 [ -n "$NEWSV_OUT" ] && STALE_HINT="$STALE_HINT
 
-NEWS 昨日自检 (${NEWS_YDAY}, 系统自己抓的 news coverage drop — 不是 the operator 报的). Surface under ACTION NEEDED as '📰 news 自检':
+NEWS 昨日自检 (${NEWS_YDAY}, 系统自己抓的 news coverage drop — 不是用户报的). Surface under ACTION NEEDED as '📰 news 自检':
 $NEWSV_OUT"
 
 # 2026-07-18 (Armstrong calibration loop): Mondays, harvest last week's verdict signal; if the week had
 # real signal (>=3 判断行), instruct the brief agent to RUN the calibration-loop skill inline (silent
-# self-improvement, HARD RULE #7 — applied changes reported as one line, nothing lands on the operator).
+# self-improvement, rule #7 — applied changes reported as one line, nothing lands on the operator).
 if [ "$(date +%u)" = "1" ]; then
   CAL_N=$(python3 "$HOME/agent-os/loops/calibration-input.py" 2>/dev/null | grep -cE "^- ")
   if [ "${CAL_N:-0}" -ge 3 ]; then
@@ -155,8 +155,8 @@ if [ $PUMP_EXIT -eq 0 ]; then
     echo "[$(date)] Morning brief delegated + VERIFIED delivered via Atlas tmux (receipt file + last-reply). Done." >> "$LOG"
     date +%s > /tmp/cron-heartbeats/com.operator.morning-brief 2>/dev/null || true   # 8/25 gap: success path never wrote the marker → stale alerts
     echo 0 > "$PUMP_FAIL_STATE"   # pump worked → reset the streak
-    # ⛔ dashboard DISABLED 2026-07-23 (the operator: 不再看彩色版, 省资源). Re-enable = uncomment + un-⛔ the skill section.
-    # # ⛔ dashboard DISABLED 2026-07-23 (the operator 不再看). python3 "$HOME/agent-os/scripts/brief-dashboard-gen.py" >> "$LOG" 2>&1 || true
+    # ⛔ dashboard DISABLED 2026-07-23 (no longer used; saves resources). Re-enable = uncomment + un-⛔ the skill section.
+    # # ⛔ dashboard DISABLED 2026-07-23 (no longer used). python3 "$HOME/agent-os/scripts/brief-dashboard-gen.py" >> "$LOG" 2>&1 || true
     exit 0
   fi
   echo "[$(date)] tmux-pump injected but Atlas did NOT deliver — falling back to claude -p." >> "$LOG"
@@ -256,5 +256,5 @@ else
   bash "$HOME/agent-os/reliability/cron-heartbeat.sh" fail com.operator.morning-brief "gen failed exit=$EXIT_CODE" 2>/dev/null
 fi
 
-# ⛔ dashboard DISABLED 2026-07-23 (the operator 不再看彩色版) — python3 "$HOME/agent-os/scripts/brief-dashboard-gen.py" >> "$LOG" 2>&1 || true
+# ⛔ dashboard DISABLED 2026-07-23 (no longer used) — python3 "$HOME/agent-os/scripts/brief-dashboard-gen.py" >> "$LOG" 2>&1 || true
 echo "[$(date)] Complete." >> "$LOG"

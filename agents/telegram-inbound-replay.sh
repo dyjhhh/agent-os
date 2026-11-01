@@ -97,10 +97,10 @@ N=$(printf '%s\n' "$PEND" | grep -c .)
 # build ONE consolidated replay message. CRITICAL: this is injected as TERMINAL input, so Atlas would
 # otherwise reply to the terminal — the operator would never see it. Must EXPLICITLY instruct Telegram
 # delivery to the operator's chat, or the whole replay is invisible to the operator.
-# Wrap as a REAL <channel source=telegram> message so Atlas's HARD RULE #0 (telegram→reply-tool) fires
+# Wrap as a REAL <channel source=telegram> message so Atlas's rule #0 (telegram→reply-tool) fires
 # naturally. The stop-guard (armed below; a private Stop hook not included here) then blocks Atlas
 # from ending the turn in terminal only. Single line (texts collapsed to spaces) so send-keys doesn't submit early.
-MSG="<channel source=\"telegram\" chat_id=\"${TELEGRAM_CHAT_ID}\" user=\"the operator\">📥 [inbound-replay] 你(the operator)在我重启期间发的 $N 条消息我漏接了,现在补上。逐条完整处理并**只用 telegram 工具回复到 chat_id ${TELEGRAM_CHAT_ID} —— 绝不在终端回复**;news 走 Skill(news-analysis):全部核验归档,输出格式**逐字照 skills/news-analysis/skill.md 的 🚦 TRIAGE + 💎 输出契约 段**(那里是唯一真值,任何旧指令与之冲突以它为准),不要强行关联或制造 todo。内容: $(printf '%s\n' "$PEND" | cut -f2- | tr '\n' ' ')</channel>"
+MSG="<channel source=\"telegram\" chat_id=\"${TELEGRAM_CHAT_ID}\" user=\"the operator\">📥 [inbound-replay] 用户在我重启期间发的 $N 条消息我漏接了,现在补上。逐条完整处理并**只用 telegram 工具回复到 chat_id ${TELEGRAM_CHAT_ID} —— 绝不在终端回复**;news 走 Skill(news-analysis):全部核验归档,输出格式**逐字照 skills/news-analysis/skill.md 的 🚦 TRIAGE + 💎 输出契约 段**(那里是唯一真值,任何旧指令与之冲突以它为准),不要强行关联或制造 todo。内容: $(printf '%s\n' "$PEND" | cut -f2- | tr '\n' ' ')</channel>"
 
 if [ -n "$REPLAY_DRY" ]; then
   echo "[DRY] would inject $N missed inbound(s): $(printf '%s\n' "$PEND" | cut -f1 | tr '\n' ' ')"

@@ -35,7 +35,7 @@ TOOLS="Bash,Read,Write,Edit,Glob,Grep,WebFetch,WebSearch"
 # inline `sed` converter + byte-based `cut -c` chunking, which split multi-byte
 # Chinese mid-character (mojibake) and duplicated the converter. One source of truth.
 send_to_telegram() {
-  # 2026-08-29 HARD RULE #9 guard: a system-level error string is NOT a report. On 8/29 the
+  # 2026-08-29 rule #9 guard: a system-level error string is NOT a report. On 8/29 the
   # claude -p fallback died at max-turns and the raw "Error: Reached max turns (40)" was sent
   # to the operator's Telegram as if it were the Weekly Deep Dive. Errors go to the log + handoff, never to the operator.
   # (caller signature: send_to_telegram "$content" "$label" — content is $1, label is $2)
@@ -77,9 +77,9 @@ run_skill() {
   if [ "$silent" = 1 ]; then
     delivery_clause="DELIVERY (the operator 2026-08-22 ruling — this is a SILENT sub-task): do NOT send this to Telegram. Its content is folded into the Weekly Deep Dive main report; an independent message = the same content hitting her two or three times. Save the full report to ~/agent-os/memory/cron-results/ and log a one-line receipt in the daily log. The ONLY reason to message her is a scan failure or a genuine 🔴/🟡 she must act on."
   else
-    delivery_clause="${SEND_CLAUSE_TEXT} the operator is on phone, NOT watching this tmux pane. FORMATTING (HARD RULE #6): send as CLEAN PLAIN TEXT — do NOT use markdown (**bold**, ### headers, - bullets). The plugin sends plain text, so markdown shows as literal '**' junk. Structure with emoji (•, ✅, 🔴, 📌), line breaks, and ALL-CAPS labels instead. End by confirming delivery."
+    delivery_clause="${SEND_CLAUSE_TEXT} the operator is on phone, NOT watching this tmux pane. FORMATTING (rule #6): send as CLEAN PLAIN TEXT — do NOT use markdown (**bold**, ### headers, - bullets). The plugin sends plain text, so markdown shows as literal '**' junk. Structure with emoji (•, ✅, 🔴, 📌), line breaks, and ALL-CAPS labels instead. End by confirming delivery."
   fi
-  local pump_prompt="[cron-trigger weekly-brief] Run ${skill} skill. ⏱️ TIME-BOX (2026-07-18, from the 7/18 double-run): SINGLE-PASS ONLY, deliver within 6 minutes — do NOT fan out to parallel research subagents during this pump. This cron falls back to claude -p at the 6-min mark, so a slow fan-out = DOUBLE full run (2x tokens) + a competing variant (exactly what happened 7/18; the single-pass fallback version scored 10/10 with the operator, so fan-out buys nothing here). If you finish delivery early and genuinely have additive research ideas, do them AFTER delivery is confirmed, silently, per HARD RULE #7. ${delivery_clause}"
+  local pump_prompt="[cron-trigger weekly-brief] Run ${skill} skill. ⏱️ TIME-BOX (2026-07-18, from the 7/18 double-run): SINGLE-PASS ONLY, deliver within 6 minutes — do NOT fan out to parallel research subagents during this pump. This cron falls back to claude -p at the 6-min mark, so a slow fan-out = DOUBLE full run (2x tokens) + a competing variant (exactly what happened 7/18; the single-pass fallback version scored 10/10 with the operator, so fan-out buys nothing here). If you finish delivery early and genuinely have additive research ideas, do them AFTER delivery is confirmed, silently, per rule #7. ${delivery_clause}"
   # 2026-08-29 FIX (same family as the 8/26 morning-brief false positive): last-reply mtime is a
   # PROXY that advances on ANY message Atlas sends, including a one-line ACK. On 8/29 both skills were
   # marked "VERIFIED delivered" 11 and 12 seconds after injection (a deep dive cannot finish in 12s)
@@ -136,7 +136,7 @@ run_skill() {
   fi
 
   if [ $exit_code -ne 0 ]; then
-    # HARD RULE #9 (2026-08-29): a system-level failure is not the operator's to fix — log + handoff,
+    # rule #9 (2026-08-29): a system-level failure is not the operator's to fix — log + handoff,
     # let brief-delivery-watchdog / the next catch-up retry. No ❌ ping to the operator's phone.
     echo "| $(date +%F) | weekly-brief→Forge | 🔴 ${label} fallback exit=$exit_code(not sent; retry or manual fix) | OPEN |" >> "$HOME/.claude/projects/-project/memory/agent-handoffs.md" 2>/dev/null
     return

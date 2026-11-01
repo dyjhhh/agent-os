@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # claims-audit.py — FULL claims-vs-disk audit of Atlas's outbound receipts for a given day (2026-07-18,
-# the operator: "他说他归档/做了的东西,你确保他真的有做"). Reads every send in outbound-ledger.jsonl for the
+# the operator asked that every claimed archive or action be checked on disk). Reads every send in outbound-ledger.jsonl for the
 # date, extracts every claim (已归档 X / 已执行 file[:line] [「quote」] / 已交接), verifies each against
 # disk: vault file exists; cited quote really in the cited file; handoff noted. Prints TRUE/FALSE lists.
 # Exit 1 if any claim is false (so a wrapper/cron can act). Zero LLM tokens.
