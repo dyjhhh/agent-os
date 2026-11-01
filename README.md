@@ -1,5 +1,9 @@
 # Personal Agent OS
 
+**Problem:** a new agent session cannot tell from chat history alone what earlier sessions actually finished.\
+**What it shows:** durable task state for always-on agents: state and handoff receipt in one transaction, stale writes rejected, safe retries.\
+**Run it in about 60 seconds:** clone, then `make test` (Python 3.10+ and Make; no model, account or network).
+
 [![tests](https://github.com/dyjhhh/agent-os/actions/workflows/test.yml/badge.svg)](https://github.com/dyjhhh/agent-os/actions/workflows/test.yml)
 
 I build and operate a personal agent system with shared state, evaluation checks,
@@ -8,12 +12,9 @@ research, documents and daily operations. The agents run on Claude Code and
 Codex, which I also use to write this code; I review the changes myself.
 
 This repository makes part of that work runnable without access to my accounts
-or private data. The question behind the first example is simple:
-**when a new session picks up a task, how does it know what actually happened?**
+or private data.
 
 ## Run the continuity example
-
-Python 3.10 or newer and Make are enough. No model, account or network required.
 
 ```sh
 make demo
