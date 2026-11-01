@@ -59,8 +59,8 @@ enterprise deployment.
 | [Agent Security Hooks](https://github.com/dyjhhh/agent-security-hooks) | Bounded tool guards and input screening | [Coverage and limitations](https://github.com/dyjhhh/agent-security-hooks/blob/main/docs/security.md) |
 | [Agent Reliability](https://github.com/dyjhhh/agent-reliability) | Alert decisions, delivery state, successful-work evidence and calendar replay | [Offline demo](https://github.com/dyjhhh/agent-reliability/blob/main/demo.py) |
 | [Self-Improving Loops](https://github.com/dyjhhh/self-improving-loops) | Feedback, explicit approval and regression checks | [Synthetic demo](https://github.com/dyjhhh/self-improving-loops/blob/main/demo.py) |
-| [Award Alert Bridge](https://github.com/dyjhhh/award-alert-bridge) | Time-critical alerts: one event key, a wake ceiling and gated re-arming | [Offline demo](https://github.com/dyjhhh/award-alert-bridge/blob/main/demo.py) |
-| [Careers Watch](https://github.com/dyjhhh/careers-watch) | Feed monitoring with exact identity and a zero-token prefilter before any model call | [Offline demo](https://github.com/dyjhhh/careers-watch/blob/main/demo.py) |
+| [Award Seat Alerter](https://github.com/dyjhhh/award-seat-alerter) | Time-critical alerts: one event key, a wake ceiling and gated re-arming | [Offline demo](https://github.com/dyjhhh/award-seat-alerter/blob/main/demo.py) |
+| [Career Watcher](https://github.com/dyjhhh/career-watcher) | Feed monitoring with exact identity and a zero-token prefilter before any model call | [Offline demo](https://github.com/dyjhhh/career-watcher/blob/main/demo.py) |
 
 The artifact-preflight demo asks a second question: **is this still the exact
 artifact and evidence the reviewer approved?** An edited source, changed artifact
